@@ -1,4 +1,4 @@
-package com.edu.ulab.app.web;
+package com.edu.ulab.app.web.controllers;
 
 import com.edu.ulab.app.facade.UserDataFacade;
 import com.edu.ulab.app.web.constant.WebConstant;
@@ -41,8 +41,9 @@ public class UserController {
         return response;
     }
 
-    @PutMapping(value = "/update")
-    public UserBookResponse updateUserWithBooks(@RequestBody UserBookRequest request) {
+    @PutMapping(value = "/update/{userId}")
+    public UserBookResponse updateUserWithBooks(@RequestBody UserBookRequest request, @PathVariable Long userId) {
+        request.getUserRequest().setId(userId);
         UserBookResponse response = userDataFacade.updateUserWithBooks(request);
         log.info("Response with updated user and his books: {}", response);
         return response;

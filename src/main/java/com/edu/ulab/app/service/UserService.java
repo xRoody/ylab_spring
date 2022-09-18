@@ -9,5 +9,7 @@ public interface UserService {
 
     UserDto getUserById(Long id);
 
-    void deleteUserById(Long id);
+    UserDto deleteUserById(Long id);
+
+    void clearBookSet(Long id);
 }
