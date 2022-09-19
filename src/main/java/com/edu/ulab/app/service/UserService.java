@@ -12,4 +12,6 @@ public interface UserService {
     UserDto deleteUserById(Long id);
 
     void clearBookSet(Long id);
+
+    void removeBook(Long userId, Long bookId);
 }

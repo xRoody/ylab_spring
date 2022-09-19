@@ -59,4 +59,16 @@ public class UserServiceImpl implements UserService {
             x.getBookSet().clear();
         });
     }
+
+    public void removeBook(Long userId, Long bookId){
+        userRepo.findById(userId).ifPresent(x->{
+            for (int i=0; i<x.getBookSet().size(); i++){
+                if (x.getBookSet().get(i).getId().equals(bookId)) {
+                    x.getBookSet().get(i).setUser(null);
+                    x.getBookSet().remove(i);
+                    break;
+                }
+            }
+        });
+    }
 }

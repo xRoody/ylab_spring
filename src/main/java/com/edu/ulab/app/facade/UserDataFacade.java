@@ -46,7 +46,9 @@ public class UserDataFacade {
     public UserBookResponse updateUserWithBooks(UserBookRequest userBookRequest) {
         log.info("Got user book create request: {}", userBookRequest);
         UserDto userDto=userService.updateUser(userMapper.userRequestToUserDto(userBookRequest.getUserRequest()));
-        userService.clearBookSet(userDto.getId());
+        bookService.findAllBooksByUserId(userDto.getId()).stream()
+                .filter(x->userBookRequest.getBookRequests().stream().noneMatch(y->y.getId().equals(x.getId())))
+                .forEach(x->userService.removeBook(userDto.getId(), x.getId()));
         List<Long> books=new ArrayList<>();
         if(userBookRequest.getBookRequests()!=null) {
             books = userBookRequest.getBookRequests()
