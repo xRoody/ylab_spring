@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 
-
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -34,10 +33,10 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto) {
         return userMapper.userToUserDto(userRepo.findById(userDto.getId())
                 .stream()
-                .peek(x->{
-                    if (userDto.getAge()>=0) x.setAge(userDto.getAge());
-                    if (userDto.getFullName()!=null) x.setFullName(userDto.getFullName());
-                    if (userDto.getTitle()!=null) x.setTitle(userDto.getTitle());
+                .peek(x -> {
+                    if (userDto.getAge() >= 0) x.setAge(userDto.getAge());
+                    if (userDto.getFullName() != null) x.setFullName(userDto.getFullName());
+                    if (userDto.getTitle() != null) x.setTitle(userDto.getTitle());
                 })
                 .findFirst()
                 .orElse(null));
@@ -53,16 +52,16 @@ public class UserServiceImpl implements UserService {
         return userMapper.userToUserDto(userRepo.deleteById(id));
     }
 
-    public void clearBookSet(Long id){
-        userRepo.findById(id).ifPresent(x->{
-            x.getBookSet().forEach(y->y.setUser(null));
+    public void clearBookSet(Long id) {
+        userRepo.findById(id).ifPresent(x -> {
+            x.getBookSet().forEach(y -> y.setUser(null));
             x.getBookSet().clear();
         });
     }
 
-    public void removeBook(Long userId, Long bookId){
-        userRepo.findById(userId).ifPresent(x->{
-            for (int i=0; i<x.getBookSet().size(); i++){
+    public void removeBook(Long userId, Long bookId) {
+        userRepo.findById(userId).ifPresent(x -> {
+            for (int i = 0; i < x.getBookSet().size(); i++) {
                 if (x.getBookSet().get(i).getId().equals(bookId)) {
                     x.getBookSet().get(i).setUser(null);
                     x.getBookSet().remove(i);

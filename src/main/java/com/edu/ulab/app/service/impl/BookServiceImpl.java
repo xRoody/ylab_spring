@@ -24,17 +24,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto createBook(BookDto bookDto) {
-        Book b=bookMapper.bookDtoToBook(bookDto);
-        if (bookDto.getUserId()!=null) {
-            Optional<User> user= userRepo.findById(bookDto.getUserId());
+        Book b = bookMapper.bookDtoToBook(bookDto);
+        if (bookDto.getUserId() != null) {
+            Optional<User> user = userRepo.findById(bookDto.getUserId());
             user.ifPresent(x -> {
                 x.getBookSet().add(b);
                 b.setUser(x);
             });
         }
-        Book bb=bookRepo.persist(b);
-        BookDto d=bookMapper.bookToBookDto(bb);
-        if (bb.getUser()!=null) d.setUserId(bb.getUser().getId());
+        Book bb = bookRepo.persist(b);
+        BookDto d = bookMapper.bookToBookDto(bb);
+        if (bb.getUser() != null) d.setUserId(bb.getUser().getId());
         return d;
     }
 
@@ -42,56 +42,48 @@ public class BookServiceImpl implements BookService {
     public BookDto updateBook(BookDto bookDto) {
         return bookRepo.findById(bookDto.getId())
                 .stream()
-                .peek(x->{
-                    if (bookDto.getTitle()!=null) x.setTitle(bookDto.getTitle());
-                    if (bookDto.getAuthor()!=null) x.setAuthor(bookDto.getAuthor());
-                    if (bookDto.getPageCount()!=0) x.setPageCount(bookDto.getPageCount());
-                    if (x.getUser() != null && !x.getUser().getUser_id().equals(bookDto.getUserId())) {
-                        for (int i=0; i<x.getUser().getBookSet().size(); i++){
-                            if (x.getUser().getBookSet().get(i).getId().equals(x.getId())){
-                                x.getUser().getBookSet().remove(i);
-                                break;
-                            }
-                        }
-                        if (bookDto.getUserId() != null) {
-                            userRepo.findById(bookDto.getUserId()).ifPresent(v -> {
-                                x.setUser(v);
-                                v.getBookSet().add(x);
-                            });
-                        }
+                .peek(x -> {
+                    if (bookDto.getTitle() != null) x.setTitle(bookDto.getTitle());
+                    if (bookDto.getAuthor() != null) x.setAuthor(bookDto.getAuthor());
+                    if (bookDto.getPageCount() != 0) x.setPageCount(bookDto.getPageCount());
+                    if (bookDto.getUserId() != null) {
+                        userRepo.findById(bookDto.getUserId()).ifPresent(v -> {
+                            x.setUser(v);
+                            v.getBookSet().add(x);
+                        });
                     }
-                }).map(x->bookMapper.bookToBookDto(x)).findAny().orElse(null);
+                }).map(x -> bookMapper.bookToBookDto(x)).findAny().orElse(null);
     }
 
     @Override
     public BookDto getBookById(Long id) {
-        Optional<Book> book=bookRepo.findById(id);
+        Optional<Book> book = bookRepo.findById(id);
         if (book.isEmpty()) return null;
-        BookDto dto=bookMapper.bookToBookDto(book.get());
-        if (book.get().getUser()!=null) dto.setUserId(book.get().getUser().getId());
+        BookDto dto = bookMapper.bookToBookDto(book.get());
+        if (book.get().getUser() != null) dto.setUserId(book.get().getUser().getId());
         return dto;
     }
 
     @Override
     public BookDto deleteBookById(Long id) {
-        Book book=bookRepo.deleteById(id);
-        BookDto dto=bookMapper.bookToBookDto(book);
-        if (book.getUser()!=null) dto.setUserId(book.getUser().getId());
+        Book book = bookRepo.deleteById(id);
+        BookDto dto = bookMapper.bookToBookDto(book);
+        if (book.getUser() != null) dto.setUserId(book.getUser().getId());
         return dto;
     }
 
-    public List<BookDto> findAllBooksByUserId(Long id){
+    public List<BookDto> findAllBooksByUserId(Long id) {
         return bookRepo.findAllBooksByUserId(id).stream().map(book -> {
-            BookDto d=bookMapper.bookToBookDto(book);
-            if (book.getUser()!=null) d.setUserId(book.getUser().getId());
+            BookDto d = bookMapper.bookToBookDto(book);
+            if (book.getUser() != null) d.setUserId(book.getUser().getId());
             return d;
         }).collect(Collectors.toList());
     }
 
-    public List<BookDto> findAll(){
+    public List<BookDto> findAll() {
         return bookRepo.findAll().stream().map(book -> {
-            BookDto d=bookMapper.bookToBookDto(book);
-            if (book.getUser()!=null) d.setUserId(book.getUser().getId());
+            BookDto d = bookMapper.bookToBookDto(book);
+            if (book.getUser() != null) d.setUserId(book.getUser().getId());
             return d;
         }).toList();
     }

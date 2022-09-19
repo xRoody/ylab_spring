@@ -48,7 +48,11 @@ public class UserDataFacade {
         UserDto userDto=userService.updateUser(userMapper.userRequestToUserDto(userBookRequest.getUserRequest()));
         bookService.findAllBooksByUserId(userDto.getId()).stream()
                 .filter(x->userBookRequest.getBookRequests().stream().noneMatch(y->y.getId().equals(x.getId())))
-                .forEach(x->userService.removeBook(userDto.getId(), x.getId()));
+                .forEach(x->userService.removeBook(x.getUserId(), x.getId()));
+        userBookRequest.getBookRequests().stream()
+                .map(x->bookService.getBookById(x.getId()))
+                .filter(x->!userBookRequest.getUserRequest().getId().equals(x.getUserId()))
+                .forEach(x->userService.removeBook(x.getUserId(), x.getId()));
         List<Long> books=new ArrayList<>();
         if(userBookRequest.getBookRequests()!=null) {
             books = userBookRequest.getBookRequests()
